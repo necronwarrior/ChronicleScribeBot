@@ -1,0 +1,3 @@
+[submodule "card_images/chronicle_rewritten_card_images"]
+	path = card_images/chronicle_rewritten_card_images
+	url = https://github.com/necronwarrior/chronicle_rewritten_card_images.git
