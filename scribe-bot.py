@@ -26,7 +26,7 @@ def findCardImage(name, path):
     for root, dirs, files in os.walk(path):
         for file in files:
             if os.path.splitext(file)[0].lower() == name.lower():
-                return os.path.join(root, name)
+                return os.path.join(root, os.path.splitext(file)[0])
         for dir in dirs:
             foundName = findCardImage(name, dir)
             if foundName != None:
@@ -87,24 +87,24 @@ async def card(ctx, args):
         await ctx.send(f"I require the name of a card, {ctx.author.name}.")
         return
 
-    # Condense all card arguments into one full name with underscore seperators
-    cardString = "_".join(args)
+    # Condense all card arguments into one full name
+    # with spaces replaced with underscores
+    # and apostrophes replaced with tilde
+    cardSearchString = "_".join(args).replace(" ", "_").replace("'", "~")
 
-    cardString = cardString.replace(" ", "_").lower().title()
-    fileLocation = findCardImage(cardString, os.getcwd() + "/card_images/")
-
-    cardString = cardString.replace("_", " ")
+    fileLocation = findCardImage(cardSearchString, os.getcwd() + "/card_images/")
 
     if fileLocation == None:
-        await ctx.send(f"I find no record of the card \"{cardString}\" in my collection, {ctx.author.name}.")
+        await ctx.send(f"I find no record of the card \"{args}\" in my collection, {ctx.author.name}.")
         return
 
     with open(fileLocation + ".png", 'rb') as f:
+        cardRealName = os.path.splitext(os.path.basename(fileLocation))[0].replace("_", " ").replace("~", "'")
         picture = discord.File(f)
 
         # We say behold if we're talking directly to a person for flavour
         if isinstance(ctx.channel, discord.channel.DMChannel):
-            await ctx.channel.send(f"BEHOLD {ctx.author.name}, {cardString}!", file=picture)
+            await ctx.channel.send(f"BEHOLD {ctx.author.name}, {cardRealName}!", file=picture)
         else:
             await ctx.channel.send(file=picture)
         return
