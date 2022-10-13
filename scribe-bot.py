@@ -17,7 +17,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='/scribe', intents=intents)
+bot = commands.Bot(command_prefix=['/scribe', '.scribe', '/Scribe', '.Scribe'], intents=intents)
 
 def findCardImage(name, path):
     """
@@ -90,10 +90,10 @@ async def card(ctx, args):
     # Condense all card arguments into one full name with underscore seperators
     cardString = "_".join(args)
 
-    cardString.replace(" ", "_")
-    fileLocation = findCardImage(cardString, os.getcwd() + "\\card_images\\")
+    cardString = cardString.replace(" ", "_").lower().title()
+    fileLocation = findCardImage(cardString, os.getcwd() + "/card_images/")
 
-    cardString = cardString.replace("_", " ").lower().title()
+    cardString = cardString.replace("_", " ")
 
     if fileLocation == None:
         await ctx.send(f"I find no record of the card \"{cardString}\" in my collection, {ctx.author.name}.")
@@ -126,7 +126,7 @@ async def cardlist(ctx, args):
         await ctx.author.send(f"I apologise, but I cannot find \"{className}\" in my collection, {ctx.author.name}.")
         return
 
-    classCardList = os.listdir(os.getcwd() + f"\\card_images\\chronicle_rewritten_card_images\\{className}")
+    classCardList = os.listdir(os.getcwd() + f"/card_images/chronicle_rewritten_card_images/{className}")
 
     await ctx.author.send(f"I have located these cards belonging to the legend {className} in my collection")
     longCardString = ""
